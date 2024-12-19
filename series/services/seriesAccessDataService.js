@@ -7,10 +7,10 @@ async function getAllSeries() {
 }
 
 async function postNewSeries(newSeries) {
-    const { title, genre, release_year, description } = newSeries;
+    const { title, genre, release_year, description, image } = newSeries;
     let [result] = await db.query(
-        'INSERT INTO tv_series (title, genre, release_year, description) VALUES (?, ?, ?, ?)',
-        [title, genre, release_year, description],
+        'INSERT INTO tv_series (title, genre, release_year, description, image ) VALUES (?, ?, ?, ?, ?)',
+        [title, genre, release_year, description, image],
     );
     return result;
 }
@@ -22,5 +22,6 @@ async function deleteSeries(id) {
     );
     return result;
 }
+
 
 module.exports = { getAllSeries, postNewSeries, deleteSeries };
