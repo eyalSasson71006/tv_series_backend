@@ -1,6 +1,6 @@
 const express = require("express");
 const { getAllSeries, postNewSeries, deleteSeries } = require("../services/seriesAccessDataService");
-const db = require("../../DB/connectToDB");
+const auth = require("../../middlewares/auth");
 
 const router = express.Router();
 
@@ -13,8 +13,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     const newSeries = req.body;
+    const userInfo = req.user;
+
+    if (!userInfo.isAdmin) return res.status(401).send("Unauthorized user, only admins can add content");
+
     try {
         await postNewSeries(newSeries);
         res.send("series added");
@@ -23,8 +27,12 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     const { id } = req.params;
+    const userInfo = req.user;
+
+    if (!userInfo.isAdmin) return res.status(401).send("Unauthorized user, only admins can delete content");
+
     try {
         await deleteSeries(id);
         res.send("series deleted");
