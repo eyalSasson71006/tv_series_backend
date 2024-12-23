@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, getAllUsers, loginUser } = require("../services/usersAccessDataService");
+const { registerUser, getAllUsers, loginUser, getUserByEmail } = require("../services/usersAccessDataService");
 require("dotenv").config();
 const verifyGoogleToken = require("../../auth/googleApiService");
 const { generateToken } = require("../../auth/JWTService");
@@ -44,6 +44,18 @@ router.get("/", async (req, res) => {
     try {
         const users = await getAllUsers();
         res.send(users);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+router.get("/:email", async (req, res) => {
+    const { email } = req.params;
+    try {
+        const user = await getUserByEmail(email);
+        console.log(user);
+        
+        res.send(user);
     } catch (error) {
         res.status(500).send(error.message);
     }

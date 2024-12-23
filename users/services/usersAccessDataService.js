@@ -7,6 +7,13 @@ async function getAllUsers() {
     return result;
 }
 
+async function getUserByEmail(email) {
+    console.log(email);
+    let [result] = await db.query('SELECT * FROM users WHERE email=?', [email]);  
+    
+    return result[0];
+}
+
 async function loginUser(userData) {
     let { email, password } = userData;
     let [result] = await db.query('SELECT * FROM users WHERE email=? AND password=?', [email, password]);    
@@ -31,4 +38,4 @@ async function registerUser(user) {
     return result;
 }
 
-module.exports = { getAllUsers, registerUser, loginUser };
+module.exports = { getAllUsers, registerUser, loginUser, getUserByEmail };
