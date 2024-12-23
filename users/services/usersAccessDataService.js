@@ -1,18 +1,36 @@
+const { generateToken } = require("../../auth/JWTService");
 const db = require("../../DB/connectToDB");
 
 
-async function getAllUsers(){
+async function getAllUsers() {
     let [result] = await db.query('SELECT * FROM users');
     return result;
 }
 
-async function registerUser(user){
-    const {userName, email, password} = user;
+async function loginUser(userData) {
+    let { email, password } = userData;
+    let [result] = await db.query('SELECT * FROM users WHERE email=? AND password=?', [email, password]);
+    if (result.length < 0) {
+        throw new Error("User not found");
+    }
+    const token = generateToken(userData);
+    console.log(token);
+    
+    return token;
+}
+
+async function registerUser(user) {
+    const { image, email, password } = user;
+    let [existingUser] = await db.query('SELECT * FROM users WHERE email=?', [email]);
+    if (existingUser.length > 0) {
+        throw new Error("User with this email already exists");
+    };
+    console.log(existingUser,existingUser.length);
     let [result] = await db.query(
-        'INSERT INTO users (userName, email, password) VALUES (?, ?, ?)',
-        [userName, email, password],
+        'INSERT INTO users (image, email, password) VALUES (?, ?, ?)',
+        [image, email, password],
     );
     return result;
 }
 
-module.exports = {getAllUsers, registerUser};
+module.exports = { getAllUsers, registerUser, loginUser };
