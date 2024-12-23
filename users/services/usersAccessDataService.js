@@ -9,13 +9,11 @@ async function getAllUsers() {
 
 async function loginUser(userData) {
     let { email, password } = userData;
-    let [result] = await db.query('SELECT * FROM users WHERE email=? AND password=?', [email, password]);
-    if (result.length < 0) {
+    let [result] = await db.query('SELECT * FROM users WHERE email=? AND password=?', [email, password]);    
+    if (result.length < 1) {
         throw new Error("User not found");
     }
     const token = generateToken(userData);
-    console.log(token);
-
     return token;
 }
 
