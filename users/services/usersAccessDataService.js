@@ -15,17 +15,17 @@ async function loginUser(userData) {
     }
     const token = generateToken(userData);
     console.log(token);
-    
+
     return token;
 }
 
 async function registerUser(user) {
     const { image, email, password } = user;
+    if (!password) return;
     let [existingUser] = await db.query('SELECT * FROM users WHERE email=?', [email]);
     if (existingUser.length > 0) {
         throw new Error("User with this email already exists");
     };
-    console.log(existingUser,existingUser.length);
     let [result] = await db.query(
         'INSERT INTO users (image, email, password) VALUES (?, ?, ?)',
         [image, email, password],

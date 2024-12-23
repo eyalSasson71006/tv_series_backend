@@ -10,6 +10,7 @@ router.post("/google-login", async (req, res) => {
     const { token } = req.body;
 
     try {
+        
         const userData = await verifyGoogleToken(token);
         const appToken = generateToken(userData);
         await registerUser({ email: userData.email, image: userData.picture, password: null });
