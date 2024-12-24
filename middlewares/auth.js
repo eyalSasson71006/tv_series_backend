@@ -17,4 +17,19 @@ function auth(req, res, next) {
     }
 }
 
-module.exports = auth;
+function optionalAuth(req, res, next) {
+    const token = req.header("auth-token");
+    if (token) {
+        try {
+            const userInfo = verifyToken(token);
+            if (userInfo) {
+                req.user = userInfo;
+            }
+        } catch (error) {
+            console.warn("Invalid token provided:", error.message);
+        }
+    }
+    next(); 
+}
+
+module.exports = { auth, optionalAuth };

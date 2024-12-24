@@ -1,12 +1,13 @@
 const express = require("express");
 const { getAllSeries, postNewSeries, deleteSeries, likeSeries } = require("../services/seriesAccessDataService");
-const auth = require("../../middlewares/auth");
+const { auth, optionalAuth } = require("../../middlewares/auth");
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', optionalAuth, async (req, res) => {
+    const userInfo = req.user || null;    
     try {
-        const series = await getAllSeries();
+        const series = await getAllSeries(userInfo.id);
         res.send(series);
     } catch (error) {
         res.status(500).send(error.message);
@@ -28,12 +29,12 @@ router.post("/", auth, async (req, res) => {
 });
 
 router.put("/like/:id", auth, async (req, res) => {
-    const seriesId = req.params;
+    const { id } = req.params;
     const userInfo = req.user;
 
     try {
-        await likeSeries(seriesId, userInfo.id);
-        res.send("series liked");
+        let isLiked = await likeSeries(id, userInfo.id);
+        res.send(isLiked);
     } catch (error) {
         res.status(500).send(error.message);
     }
