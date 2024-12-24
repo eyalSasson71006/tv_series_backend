@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, getAllUsers, loginUser, getUserByEmail } = require("../services/usersAccessDataService");
+const { registerUser, getAllUsers, loginUser, getUserByEmail, registerUserWithGoogle } = require("../services/usersAccessDataService");
 require("dotenv").config();
 const verifyGoogleToken = require("../../auth/googleApiService");
 const { generateToken } = require("../../auth/JWTService");
@@ -10,10 +10,9 @@ router.post("/google-login", async (req, res) => {
     const { token } = req.body;
 
     try {
-
         const userData = await verifyGoogleToken(token);
-        const appToken = generateToken(userData);
-        await registerUser({ email: userData.email, image: userData.picture, password: null });
+        let userDataFromDb = await registerUserWithGoogle({ email: userData.email, image: userData.picture, password: null });
+        const appToken = generateToken(userDataFromDb);
         res.status(200).json(appToken);
     } catch (error) {
         console.log(error);
@@ -53,8 +52,6 @@ router.get("/:email", async (req, res) => {
     const { email } = req.params;
     try {
         const user = await getUserByEmail(email);
-        console.log(user);
-        
         res.send(user);
     } catch (error) {
         res.status(500).send(error.message);

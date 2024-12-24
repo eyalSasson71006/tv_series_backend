@@ -15,6 +15,14 @@ async function postNewSeries(newSeries) {
     return result;
 }
 
+async function likeSeries(seriesId, userId) {
+    let [result] = await db.query(
+        'INSERT INTO favorites ( series_id, user_id ) VALUES (?, ?)',
+        [seriesId, userId],
+    );
+    return result;
+}
+
 async function deleteSeries(id) {
     let [result] = await db.query(
         'DELETE FROM tv_series WHERE id = ?',
@@ -24,4 +32,4 @@ async function deleteSeries(id) {
 }
 
 
-module.exports = { getAllSeries, postNewSeries, deleteSeries };
+module.exports = { getAllSeries, postNewSeries, deleteSeries, likeSeries };

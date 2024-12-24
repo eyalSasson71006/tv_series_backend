@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllSeries, postNewSeries, deleteSeries } = require("../services/seriesAccessDataService");
+const { getAllSeries, postNewSeries, deleteSeries, likeSeries } = require("../services/seriesAccessDataService");
 const auth = require("../../middlewares/auth");
 
 const router = express.Router();
@@ -22,6 +22,18 @@ router.post("/", auth, async (req, res) => {
     try {
         await postNewSeries(newSeries);
         res.send("series added");
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+router.put("/like/:id", auth, async (req, res) => {
+    const seriesId = req.params;
+    const userInfo = req.user;
+
+    try {
+        await likeSeries(seriesId, userInfo.id);
+        res.send("series liked");
     } catch (error) {
         res.status(500).send(error.message);
     }
