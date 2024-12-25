@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', optionalAuth, async (req, res) => {
     const userInfo = req.user || null;    
     try {
-        const series = await getAllSeries(userInfo.id);
+        const series = await getAllSeries(userInfo?.id);
         res.send(series);
     } catch (error) {
         res.status(500).send(error.message);

@@ -1,10 +1,16 @@
 const express = require("express");
+const path = require("path");
 const { registerUser, getAllUsers, loginUser, getUserByEmail, registerUserWithGoogle } = require("../services/usersAccessDataService");
 require("dotenv").config();
 const verifyGoogleToken = require("../../auth/googleApiService");
 const { generateToken } = require("../../auth/JWTService");
+const multerUpload = require("../services/multerStorageService");
 
 const router = express.Router();
+
+
+router.use('/data/uploads', express.static(path.join(__dirname, 'public/data/uploads')));
+
 
 router.post("/google-login", async (req, res) => {
     const { token } = req.body;
@@ -57,5 +63,10 @@ router.get("/:email", async (req, res) => {
         res.status(500).send(error.message);
     }
 });
+
+router.post('/image-upload', multerUpload.single('imageUpload'), (req, res, next) => {
+    console.log(req.file, req.body);
+});
+
 
 module.exports = router;
