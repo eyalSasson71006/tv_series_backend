@@ -34,6 +34,13 @@ async function registerUser(user) {
     );
 }
 
+async function updateUserImage(imagePath, email) {
+    await db.query(
+        'UPDATE users SET image = ? WHERE email = ?',
+        [imagePath, email],
+    );
+}
+
 async function registerUserWithGoogle(user) {
     const { image, email } = user;
     let [existingUser] = await db.query('SELECT * FROM users WHERE email=?', [email]);
@@ -46,4 +53,4 @@ async function registerUserWithGoogle(user) {
     return newUser[0];
 }
 
-module.exports = { getAllUsers, registerUser, loginUser, getUserByEmail, registerUserWithGoogle };
+module.exports = { getAllUsers, registerUser, loginUser, getUserByEmail, registerUserWithGoogle, updateUserImage };

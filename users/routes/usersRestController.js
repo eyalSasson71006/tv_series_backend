@@ -1,15 +1,12 @@
 const express = require("express");
 const path = require("path");
-const { registerUser, getAllUsers, loginUser, getUserByEmail, registerUserWithGoogle } = require("../services/usersAccessDataService");
+const { registerUser, getAllUsers, loginUser, getUserByEmail, registerUserWithGoogle, updateUserImage } = require("../services/usersAccessDataService");
 require("dotenv").config();
 const verifyGoogleToken = require("../../auth/googleApiService");
 const { generateToken } = require("../../auth/JWTService");
 const multerUpload = require("../services/multerStorageService");
 
 const router = express.Router();
-
-
-router.use('/data/uploads', express.static(path.join(__dirname, 'public/data/uploads')));
 
 
 router.post("/google-login", async (req, res) => {
@@ -65,7 +62,12 @@ router.get("/:email", async (req, res) => {
 });
 
 router.post('/image-upload', multerUpload.single('imageUpload'), (req, res, next) => {
-    console.log(req.file, req.body);
+    try {
+        updateUserImage(req.file.path, req.body.email);
+        res.send("image uploaded");
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 });
 
 

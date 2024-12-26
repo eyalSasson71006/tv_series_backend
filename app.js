@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const router = require('./router/router');
 const corsMiddleware = require('./middlewares/cors');
+const path = require("path");
 
 const PORT = process.env.PORT;
 
@@ -9,6 +10,7 @@ const app = express();
 
 app.use(corsMiddleware);
 app.use(express.json());
+app.use('/public', express.static(path.join(__dirname, './public')));
 app.use(router);
 
 app.use((err, req, res, next) => {  //error handling
