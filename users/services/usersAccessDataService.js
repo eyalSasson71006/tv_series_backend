@@ -1,5 +1,6 @@
 const { generateToken } = require("../../auth/JWTService");
 const db = require("../../DB/connectToDB");
+const { generateUserPassword, comparePasswords } = require("../helpers/bcrypt");
 
 
 async function getAllUsers() {
@@ -14,9 +15,12 @@ async function getUserByEmail(email) {
 
 async function loginUser(userData) {
     let { email, password } = userData;
-    let [result] = await db.query('SELECT * FROM users WHERE email=? AND password=?', [email, password]);
+    let [result] = await db.query('SELECT * FROM users WHERE email=?', [email]);
     if (result.length < 1) {
         throw new Error("User not found");
+    }
+    if (!comparePasswords(password, result[0].password)) {
+        throw new Error("Invalid password");
     }
     const token = generateToken(await result[0]);
     return token;
@@ -28,9 +32,12 @@ async function registerUser(user) {
     if (existingUser.length > 0) {
         throw new Error("User with this email already exists");
     };
+    let encryptPassword = generateUserPassword(password);
+    console.log(encryptPassword);
+    
     await db.query(
         'INSERT INTO users (image, email, password) VALUES (?, ?, ?)',
-        [image, email, password],
+        [image, email, encryptPassword],
     );
 }
 
