@@ -26,6 +26,27 @@ async function getAllSeries(userId = null) {
     }
 }
 
+async function getAllLikedSeries(userId) {
+        let [result] = await db.query(
+            `
+            SELECT 
+                tv_series.*, 
+                CASE 
+                    WHEN favorites.user_id IS NOT NULL THEN true 
+                    ELSE false 
+                END AS is_favorite
+            FROM 
+                tv_series
+            INNER JOIN 
+                favorites 
+            ON 
+                tv_series.id = favorites.series_id AND favorites.user_id = ?
+            `,
+            [userId]
+        );        
+        return result;
+}
+
 async function postNewSeries(newSeries) {
     const { title, genre, release_year, description, image } = newSeries;
     let [result] = await db.query(
@@ -66,4 +87,4 @@ async function deleteSeries(id) {
 }
 
 
-module.exports = { getAllSeries, postNewSeries, deleteSeries, likeSeries };
+module.exports = { getAllSeries, postNewSeries, deleteSeries, likeSeries, getAllLikedSeries };
