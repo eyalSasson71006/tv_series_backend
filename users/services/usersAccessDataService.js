@@ -9,9 +9,7 @@ async function getAllUsers() {
 }
 
 async function getUserByEmail(email) {
-    let [result] = await db.query('SELECT id, email, image, isAdmin FROM users WHERE email=?', [email]);
-    console.log(result);
-    
+    let [result] = await db.query('SELECT id, email, image, isAdmin FROM users WHERE email=?', [email]);    
     return result[0];
 }
 
