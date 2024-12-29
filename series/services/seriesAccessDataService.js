@@ -18,7 +18,7 @@ async function getAllSeries(userId = null) {
                 tv_series.id = favorites.series_id AND favorites.user_id = ?
             `,
             [userId]
-        );        
+        );
         return result;
     } else {
         let [result] = await db.query('SELECT * FROM tv_series');
@@ -27,8 +27,8 @@ async function getAllSeries(userId = null) {
 }
 
 async function getAllLikedSeries(userId) {
-        let [result] = await db.query(
-            `
+    let [result] = await db.query(
+        `
             SELECT 
                 tv_series.*, 
                 CASE 
@@ -42,9 +42,9 @@ async function getAllLikedSeries(userId) {
             ON 
                 tv_series.id = favorites.series_id AND favorites.user_id = ?
             `,
-            [userId]
-        );        
-        return result;
+        [userId]
+    );
+    return result;
 }
 
 async function postNewSeries(newSeries) {
@@ -54,6 +54,14 @@ async function postNewSeries(newSeries) {
         [title, genre, release_year, description, image],
     );
     return result;
+}
+
+async function getSeriesData(seriesId) {
+    let [result] = await db.query(
+        'SELECT * FROM tv_series WHERE id = ?',
+        [seriesId],
+    );
+    return result[0];
 }
 
 async function likeSeries(seriesId, userId) {
@@ -87,4 +95,4 @@ async function deleteSeries(id) {
 }
 
 
-module.exports = { getAllSeries, postNewSeries, deleteSeries, likeSeries, getAllLikedSeries };
+module.exports = { getAllSeries, postNewSeries, getSeriesData, deleteSeries, likeSeries, getAllLikedSeries };
